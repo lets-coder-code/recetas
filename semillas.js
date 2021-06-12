@@ -6,7 +6,7 @@ const Receta = require("./modelos/receta");
 
 mongoose
   .connect(
-    `mongodb+srv://${process.env.USUARIO_BD}:${process.env.PASSWORD_BD}@cluster-recetas.x6xvy.mongodb.net/recetas_BD?retryWrites=true&w=majority`,
+    `mongodb+srv://${process.env.USUARIO_BD}:${process.env.PASSWORD_BD}@${process.env.NOMBRE_CLUSTER}.x6xvy.mongodb.net/${process.env.NOMBRE_BD}?retryWrites=true&w=majority`,
     { useNewUrlParser: true }
   )
   .then(() => {
