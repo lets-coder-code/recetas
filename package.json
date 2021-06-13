@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
-    "semillas": "node semillas.js"
+    "seeds": "node bin/seeds.js"
   },
   "author": "",
   "license": "ISC",
