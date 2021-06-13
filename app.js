@@ -1,9 +1,13 @@
 require("dotenv").config();
 
+
 const express = require("express");
+
 
 const app = express();
 
+
+const authentication = require("./routes/authentication");
 const recipes = require("./routes/recipes");
 
 
@@ -11,10 +15,10 @@ require("./configs/dbConfig");
 
 
 app.use(express.json());
-
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/", recipes);
+app.use("/", authentication);
 
 
 app.listen(process.env.PORT, () => {

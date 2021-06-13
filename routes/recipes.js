@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
 
-const Recipe = require("../models/recipe");
+const Recipe = require("../models/Recipe");
 
 router.get("/recipes", async (req, res) => {
-  let recipes = await Recipe.find().then((foundedRecipes) => {
-    return foundedRecipes;
+  let recipes = await Recipe.find().then((foundRecipes) => {
+    return foundRecipes;
   });
   res.send(recipes);
 });
@@ -13,8 +13,8 @@ router.get("/recipes", async (req, res) => {
 router.get("/recipe/:recipeId", async (req, res) => {
   let id = req.params.recipeId;
   let recipe = await Recipe.findById(id)
-    .then((foundedRecipe) => {
-      return foundedRecipe;
+    .then((foundRecipe) => {
+      return foundRecipe;
     })
     .catch((error) => {
       res.send(error);
