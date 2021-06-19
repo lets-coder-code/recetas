@@ -93,7 +93,7 @@ authRoutes.post("/login", async (req, res) => {
 
   let passwordIsValid = await bcrypt.compare(pass, user.password);
 
-  if(passwordIsValid == false){
+  if (passwordIsValid == false) {
     res.send({ auth: false, token: null, message: "Incorrect password" });
     return;
   }
@@ -111,12 +111,12 @@ authRoutes.get("/private", async (req, res) => {
   if (!token) {
     res.send({
       auth: false,
-      message: "Token is not valid",
+      message: "There is no token provided",
     });
     return;
   }
 
-  const decoded = jwt.verify(token, process.env.SECRET_WORD);
+  const decoded = jwt.verify(token, process.env.SECRET_WORD)
 
   const user = await User.findById(decoded.id, { password: 0 }).populate(
     "recipes"
