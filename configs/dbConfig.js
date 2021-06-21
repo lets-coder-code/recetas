@@ -8,7 +8,7 @@ mongoose
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => {
-    console.log("Estamos conectados a la base de datos.");
+    console.log("We are connected to our database.");
   })
   .catch((error) => {
     console.log(error);

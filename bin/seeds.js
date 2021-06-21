@@ -5,12 +5,9 @@ const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const Recipe = require("../models/Recipe");
 
-
 require("../configs/dbConfig");
 
-
 const salt = bcrypt.genSaltSync(10);
-
 
 let recipes = [
   {
@@ -44,30 +41,33 @@ let users = [
     username: "Luis",
     password: "12345678",
     recipes: [],
+    favourites: [],
   },
   {
     username: "Mario",
     password: "12345677",
     recipes: [],
+    favourites: [],
   },
   {
     username: "Juan",
     password: "12345676",
     recipes: [],
+    favourites: [],
   },
 ];
 
 users.forEach((user) => {
   let hashPass = bcrypt.hashSync(user.password, salt);
   user.password = hashPass;
-})
+});
 
 recipes.forEach((recipe) => {
   let recipeId = recipe._id;
   let max = users.length - 1;
   let userIndex = Math.floor(Math.random() * max);
   users[userIndex].recipes.push(recipeId);
-})
+});
 
 Recipe.deleteMany()
   .then(() => {

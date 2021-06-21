@@ -2,12 +2,35 @@ const express = require("express");
 const router = express.Router();
 
 const Recipe = require("../models/Recipe");
+const User = require("../models/User");
 
-router.get("/recipes", async (req, res) => {
-  let recipes = await Recipe.find().then((foundRecipes) => {
-    return foundRecipes;
-  });
-  res.send(recipes);
+const tokenValidation = require("../functions/tokenValidation");
+
+router.get("/user", async (req, res) => {
+  let myToken = req.headers.token;
+
+  let user = await tokenValidation(res, myToken);
+
+  if (!user) {
+    return;
+  }
+
+  res.send(user);
+});
+
+router.get("/searchUser/:username", async (req, res) => {
+  let myToken = req.headers.token;
+
+  let user = await tokenValidation(res, myToken);
+
+  if (!user) {
+    return;
+  }
+
+  let name = req.params.username;
+  let foundUser = await User.find({ username: name }, { password: 0 }).populate("recipes");
+
+  res.send(foundUser);
 });
 
 router.get("/recipe/:recipeId", async (req, res) => {
@@ -46,8 +69,7 @@ router.put("/updateRecipe/:recipeId", async (req, res) => {
   let recipeName = req.body.name;
   let recipeCountry = req.body.country;
   let recipeIngredients = req.body.ingredients;
-  await Recipe
-  .findByIdAndUpdate(id, {
+  await Recipe.findByIdAndUpdate(id, {
     name: recipeName,
     country: recipeCountry,
     ingredients: recipeIngredients,

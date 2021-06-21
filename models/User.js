@@ -6,6 +6,7 @@ const userSchema = new Schema(
     username: String,
     password: String,
     recipes: [{ type: Schema.Types.ObjectId, ref: "Recipe" }],
+    favourites: [{ type: Schema.Types.ObjectId, ref: "Recipe" }],
   },
   {
     timestamps: true,
