@@ -25,9 +25,10 @@ let tokenValidation = async (response, token) => {
     return;
   }
 
-  let user = await User.findById(validationResult.id, { password: 0 }).populate(
-    "recipes"
-  );
+  let user = await User.findById(validationResult.id, { password: 0 })
+    .populate("recipes")
+    .populate("favourites")
+    .populate("following");
 
   if (!user) {
     response.send({

@@ -1,7 +1,7 @@
 {
   "name": "recetas",
   "version": "1.0.0",
-  "description": "Api sobre recetas de cocina.",
+  "description": "Recipes api",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",

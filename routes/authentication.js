@@ -81,7 +81,7 @@ authRoutes.post("/signup", async (req, res) => {
   });
 });
 
-authRoutes.post("/login", async (req, res) => {
+authRoutes.get("/login", async (req, res) => {
   let name = req.body.user;
   let pass = req.body.pass;
 

@@ -7,6 +7,7 @@ const userSchema = new Schema(
     password: String,
     recipes: [{ type: Schema.Types.ObjectId, ref: "Recipe" }],
     favourites: [{ type: Schema.Types.ObjectId, ref: "Recipe" }],
+    following: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   {
     timestamps: true,

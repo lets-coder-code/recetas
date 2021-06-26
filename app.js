@@ -8,7 +8,7 @@ const app = express();
 
 
 const authentication = require("./routes/authentication");
-const recipes = require("./routes/recipes");
+const user = require("./routes/user");
 
 
 require("./configs/dbConfig");
@@ -17,8 +17,8 @@ require("./configs/dbConfig");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/", recipes);
 app.use("/", authentication);
+app.use("/", user);
 
 
 app.listen(process.env.PORT, () => {
