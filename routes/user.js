@@ -5,6 +5,11 @@ const Recipe = require("../models/Recipe");
 const User = require("../models/User");
 
 const tokenValidation = require("../functions/tokenValidation");
+const verifyOwner = require("../functions/verifyOwner");
+
+const bcrypt = require("bcrypt");
+
+const salt = bcrypt.genSaltSync(10);
 
 router.get("/user", async (req, res) => {
   let myToken = req.headers.token;
@@ -33,9 +38,8 @@ router.get("/searchUser/:username", async (req, res) => {
     .populate("favourites");
 
   let isFollowed = false;
-
   user.following.forEach((element) => {
-    if (toString(element._id) == toString(foundUser._id)) {
+    if (element._id.toString() == foundUser._id.toString()) {
       isFollowed = true;
     }
   });
@@ -43,7 +47,7 @@ router.get("/searchUser/:username", async (req, res) => {
   res.send({ user: foundUser, following: isFollowed });
 });
 
-router.post("/followUser/:userId", async (req, res) => {
+router.put("/followUser/:userId", async (req, res) => {
   let myToken = req.headers.token;
 
   let user = await tokenValidation(res, myToken);
@@ -57,7 +61,7 @@ router.post("/followUser/:userId", async (req, res) => {
   let alreadyFollowing = false;
 
   user.following.forEach((populatedElement) => {
-    if (toString(populatedElement._id) == toString(followedUserId)) {
+    if (populatedElement._id == followedUserId) {
       alreadyFollowing = true;
     }
   });
@@ -79,7 +83,7 @@ router.post("/followUser/:userId", async (req, res) => {
   res.redirect(`/searchUser/${followedUser.username}`);
 });
 
-router.post("/favouriteRecipe/:recipeId", async (req, res) => {
+router.put("/favouriteRecipe/:recipeId", async (req, res) => {
   let myToken = req.headers.token;
 
   let user = await tokenValidation(res, myToken);
@@ -183,22 +187,34 @@ router.put("/updateRecipe/:recipeId", async (req, res) => {
     return;
   }
 
-  let id = req.params.recipeId;
+  let userId = user._id;
+
+  let recipeId = req.params.recipeId;
+
+  let isRecipeOwner = await verifyOwner(userId, recipeId);
+
+  if (isRecipeOwner == false) {
+    res.send({
+      message: "You are not allowed to update this recipe.",
+    });
+    return;
+  }
+
   let recipeName = req.body.name;
   let recipeCountry = req.body.country;
   let recipeIngredients = req.body.ingredients;
 
-  await Recipe.findByIdAndUpdate(id, {
+  await Recipe.findByIdAndUpdate(recipeId, {
     name: recipeName,
     country: recipeCountry,
     ingredients: recipeIngredients,
   })
-    .then(() => {})
+    .then((updatedRecipe) => {})
     .catch((error) => {
       res.send(error);
     });
 
-  res.redirect(`/recipe/${id}`);
+  res.redirect(`/recipe/${recipeId}`);
 });
 
 router.delete("/deleteRecipe/:recipeId", async (req, res) => {
@@ -210,11 +226,24 @@ router.delete("/deleteRecipe/:recipeId", async (req, res) => {
     return;
   }
 
-  let id = req.params.recipeId;
-  
-  let recipe = await Recipe.findByIdAndDelete(id).then((deletedRecipe) => {
-    return deletedRecipe;
-  });
+  let userId = user._id;
+
+  let recipeId = req.params.recipeId;
+
+  let isRecipeOwner = await verifyOwner(userId, recipeId);
+
+  if (isRecipeOwner == false) {
+    res.send({
+      message: "You are not allowed to update this recipe.",
+    });
+    return;
+  }
+
+  let recipe = await Recipe.findByIdAndDelete(recipeId).then(
+    (deletedRecipe) => {
+      return deletedRecipe;
+    }
+  );
 
   await User.findByIdAndUpdate(user._id, {
     $pull: { recipes: recipe._id },
@@ -236,6 +265,138 @@ router.delete("/deleteRecipe/:recipeId", async (req, res) => {
   });
 
   res.send(recipe);
+});
+
+router.put("/updateUser", async (req, res) => {
+  let myToken = req.headers.token;
+
+  let user = await tokenValidation(res, myToken);
+
+  if (!user) {
+    return;
+  }
+
+  let passwordLength = 8;
+
+  const username = req.body.username;
+  const password = req.body.password;
+
+  if (!username || !password) {
+    res.send({
+      update: false,
+      message: "Provide username and password.",
+    });
+    return;
+  }
+
+  if (password.length < passwordLength) {
+    res.send({
+      update: false,
+      message: "You have to provide a password with, at least, ten characters.",
+    });
+    return;
+  }
+
+  let users = await User.find().then((allUsers) => {
+    return allUsers;
+  });
+  users.forEach(async (eachUser) => {
+    if (eachUser._id != user._id) {
+      let foundUser = await User.findOne({ username: username }).then(
+        (repeatedUser) => {
+          return repeatedUser;
+        }
+      );
+      if (foundUser != null) {
+        res.send({
+          auth: false,
+          token: null,
+          message: "User name is already taken.",
+        });
+        return;
+      }
+    }
+  });
+
+  const hashPass = bcrypt.hashSync(password, salt);
+
+  await User.findByIdAndUpdate(user._id, {
+    username: username,
+    password: hashPass,
+    recipes: user.recipes,
+    favourites: user.favourites,
+    following: user.following,
+  })
+    .then((createdUser) => {})
+    .catch((error) => {
+      res.send({
+        auth: false,
+        token: null,
+        message: `We have the following error: ${error}`,
+      });
+      return;
+    });
+
+  res.redirect("/user");
+});
+
+router.delete("/deleteUser", async (req, res) => {
+  let myToken = req.headers.token;
+
+  let user = await tokenValidation(res, myToken);
+
+  if (!user) {
+    return;
+  }
+
+  let userId = user._id;
+
+  let deletedUser = await User.findByIdAndDelete(userId).then(
+    (alreadyDeleted) => {
+      return alreadyDeleted;
+    }
+  );
+
+  let users = await User.find().then((allUsers) => {
+    return allUsers;
+  });
+
+  users.forEach((eachUser) => {
+    let followingArr = eachUser.following;
+    followingArr.forEach((followedUserId) => {
+      if (userId.toString() == followedUserId.toString()) {
+        User.findByIdAndUpdate(eachUser._id, {
+          $pull: { following: userId },
+        }).then((updatedUser) => {});
+      } else {
+      }
+    });
+  });
+
+  deletedUser.recipes.forEach(async (recipeId) => {
+    let recipe = await Recipe.findByIdAndDelete(recipeId).then(
+      (deletedRecipe) => {
+        return deletedRecipe;
+      }
+    );
+
+    users.forEach(async (eachUser) => {
+      let foundFavourite = eachUser.favourites.find((favourite) => {
+        return toString(favourite) == toString(recipe._id);
+      });
+      if (foundFavourite != undefined) {
+        await User.findByIdAndUpdate(eachUser._id, {
+          $pull: { favourites: recipe._id },
+        }).then((updatedUser) => {});
+      }
+    });
+  });
+
+  res.send({
+    auth: false,
+    token: null,
+    message: "User has been deleted successfully.",
+  });
 });
 
 module.exports = router;

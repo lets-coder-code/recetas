@@ -55,7 +55,7 @@ let users = [
     password: "12345677",
     recipes: ["60c5fbdc8c3b2720a2e13642",],
     favourites: ["60c5fbdc8c3b2720a2e13640"],
-    following: [],
+    following: ["60c5fbdc8c3b2720a2e13644"],
   },
   {
     _id: "60c5fbdc8c3b2720a2e13646",

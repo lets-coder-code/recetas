@@ -15,14 +15,14 @@ const passwordLength = 8;
 
 
 authRoutes.post("/signup", async (req, res) => {
-  const user = req.body.user;
-  const pass = req.body.pass;
+  const user = req.body.username;
+  const pass = req.body.password;
 
   if (!user || !pass) {
     res.send({
       auth: false,
       token: null,
-      message: "Provide username or password.",
+      message: "Provide username and password.",
     });
     return;
   }
@@ -82,8 +82,8 @@ authRoutes.post("/signup", async (req, res) => {
 });
 
 authRoutes.get("/login", async (req, res) => {
-  let name = req.body.user;
-  let pass = req.body.pass;
+  let name = req.body.username;
+  let pass = req.body.password;
 
   let user = await User.findOne({ username: name }).then((foundUser) => {
     return foundUser;
