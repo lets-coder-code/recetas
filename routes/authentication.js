@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const authRoutes = express.Router();
 
@@ -12,7 +14,6 @@ const salt = bcrypt.genSaltSync(10);
 const expirationTime = 3600;
 
 const passwordLength = 8;
-
 
 authRoutes.post("/signup", async (req, res) => {
   const user = req.body.username;
@@ -81,9 +82,18 @@ authRoutes.post("/signup", async (req, res) => {
   });
 });
 
-authRoutes.get("/login", async (req, res) => {
+authRoutes.post("/login", async (req, res) => {
   let name = req.body.username;
   let pass = req.body.password;
+
+  if (!name || !pass) {
+    res.send({
+      auth: false,
+      token: null,
+      message: "Provide username and password.",
+    });
+    return;
+  }
 
   let user = await User.findOne({ username: name }).then((foundUser) => {
     return foundUser;
@@ -113,8 +123,11 @@ authRoutes.get("/login", async (req, res) => {
     expiresIn: expirationTime,
   });
 
-  res.send({ auth: true, token: newToken, message: `You have been logged in.` });
+  res.send({
+    auth: true,
+    token: newToken,
+    message: `You have been logged in.`,
+  });
 });
-
 
 module.exports = authRoutes;

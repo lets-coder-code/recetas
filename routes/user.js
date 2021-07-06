@@ -23,6 +23,10 @@ router.get("/user", async (req, res) => {
   res.send(user);
 });
 
+router.get("/userHola", async (req, res) => {
+  res.send({message: "hola"});
+});
+
 router.get("/searchUser/:username", async (req, res) => {
   let myToken = req.headers.token;
 
