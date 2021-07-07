@@ -14,17 +14,15 @@ const salt = bcrypt.genSaltSync(10);
 router.get("/user", async (req, res) => {
   let myToken = req.headers.token;
 
-  let user = await tokenValidation(res, myToken);
+  let user = await tokenValidation(res, myToken).then((userFound) => {
+    return userFound;
+  });
 
   if (!user) {
     return;
   }
 
-  res.send(user);
-});
-
-router.get("/userHola", async (req, res) => {
-  res.send({message: "hola"});
+  res.send({ user });
 });
 
 router.get("/searchUser/:username", async (req, res) => {
@@ -49,6 +47,23 @@ router.get("/searchUser/:username", async (req, res) => {
   });
 
   res.send({ user: foundUser, following: isFollowed });
+});
+
+router.get("/searchRecipe/:recipeName", async (req, res) => {
+  let myToken = req.headers.token;
+
+  let user = await tokenValidation(res, myToken);
+
+  if (!user) {
+    return;
+  }
+
+  let name = req.params.recipeName;
+  let recipe = await Recipe.findOne({ name: name }).then((foundRecipe) => {
+    return foundRecipe;
+  });
+
+  res.redirect(`/recipe/${recipe._id}`);
 });
 
 router.put("/followUser/:userId", async (req, res) => {
@@ -161,11 +176,13 @@ router.post("/newRecipe", async (req, res) => {
   let recipeName = req.body.name;
   let recipeCountry = req.body.country;
   let recipeIngredients = req.body.ingredients;
+  let recipePreparation = req.body.preparation;
 
   let recipe = await Recipe.create({
     name: recipeName,
     country: recipeCountry,
     ingredients: recipeIngredients,
+    preparation: recipePreparation,
     creator: user._id,
   })
     .then((newRecipe) => {
@@ -207,11 +224,13 @@ router.put("/updateRecipe/:recipeId", async (req, res) => {
   let recipeName = req.body.name;
   let recipeCountry = req.body.country;
   let recipeIngredients = req.body.ingredients;
+  let recipePreparation = req.body.preparation;
 
   await Recipe.findByIdAndUpdate(recipeId, {
     name: recipeName,
     country: recipeCountry,
     ingredients: recipeIngredients,
+    preparation: recipePreparation,
   })
     .then((updatedRecipe) => {})
     .catch((error) => {

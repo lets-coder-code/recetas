@@ -15,28 +15,36 @@ let recipes = [
     name: "pizza",
     country: "Italy",
     ingredients: ["cheese", "tomato", "flour"],
-    creator: "60c5fbdc8c3b2720a2e13644"
+    preparation:
+      "Pizza is a regular visitor to our house — only it doesn’t usually come from a delivery person. Making homemade pizza from prepared dough is a quick and easy dinner any night of the week. Even making your own dough only really adds a few minutes to the prep time! Pile on your favorite toppings and get ready to chow down.",
+    creator: "60c5fbdc8c3b2720a2e13644",
   },
   {
     _id: "60c5fbdc8c3b2720a2e13641",
     name: "rissoto",
     country: "Italy",
     ingredients: ["rice", "butter", "cheese"],
-    creator: "60c5fbdc8c3b2720a2e13644"
+    preparation:
+      "Pizza is a regular visitor to our house — only it doesn’t usually come from a delivery person. Making homemade pizza from prepared dough is a quick and easy dinner any night of the week. Even making your own dough only really adds a few minutes to the prep time! Pile on your favorite toppings and get ready to chow down.",
+    creator: "60c5fbdc8c3b2720a2e13644",
   },
   {
     _id: "60c5fbdc8c3b2720a2e13642",
     name: "cuban rice",
     country: "Cuba",
     ingredients: ["rice", "tomato", "egg"],
-    creator: "60c5fbdc8c3b2720a2e13645"
+    preparation:
+      "Pizza is a regular visitor to our house — only it doesn’t usually come from a delivery person. Making homemade pizza from prepared dough is a quick and easy dinner any night of the week. Even making your own dough only really adds a few minutes to the prep time! Pile on your favorite toppings and get ready to chow down.",
+    creator: "60c5fbdc8c3b2720a2e13645",
   },
   {
     _id: "60c5fbdc8c3b2720a2e13643",
     name: "french fries",
     country: "France",
     ingredients: ["potato", "oil", "salt"],
-    creator: "60c5fbdc8c3b2720a2e13646"
+    preparation:
+      "Pizza is a regular visitor to our house — only it doesn’t usually come from a delivery person. Making homemade pizza from prepared dough is a quick and easy dinner any night of the week. Even making your own dough only really adds a few minutes to the prep time! Pile on your favorite toppings and get ready to chow down.",
+    creator: "60c5fbdc8c3b2720a2e13646",
   },
 ];
 
@@ -53,7 +61,7 @@ let users = [
     _id: "60c5fbdc8c3b2720a2e13645",
     username: "Mario",
     password: "12345677",
-    recipes: ["60c5fbdc8c3b2720a2e13642",],
+    recipes: ["60c5fbdc8c3b2720a2e13642"],
     favourites: ["60c5fbdc8c3b2720a2e13640"],
     following: ["60c5fbdc8c3b2720a2e13644"],
   },
@@ -61,7 +69,7 @@ let users = [
     _id: "60c5fbdc8c3b2720a2e13646",
     username: "Juan",
     password: "12345676",
-    recipes: ["60c5fbdc8c3b2720a2e13643",],
+    recipes: ["60c5fbdc8c3b2720a2e13643"],
     favourites: [],
     following: [],
   },
