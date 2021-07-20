@@ -32,7 +32,7 @@ authRoutes.post("/signup", async (req, res) => {
     res.send({
       auth: false,
       token: null,
-      message: "You have to provide a password with, at least, ten characters.",
+      message: "Your password needs, at least, eight chearcters.",
     });
     return;
   }
@@ -85,7 +85,6 @@ authRoutes.post("/signup", async (req, res) => {
 authRoutes.post("/login", async (req, res) => {
   let name = req.body.username;
   let pass = req.body.password;
-
   if (!name || !pass) {
     res.send({
       auth: false,

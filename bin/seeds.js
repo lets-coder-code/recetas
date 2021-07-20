@@ -12,36 +12,36 @@ const salt = bcrypt.genSaltSync(10);
 let recipes = [
   {
     _id: "60c5fbdc8c3b2720a2e13640",
-    name: "pizza",
+    name: "Pizza",
     country: "Italy",
-    ingredients: ["cheese", "tomato", "flour"],
+    ingredients: ["Cheese", "Tomato", "Flour"],
     preparation:
       "Pizza is a regular visitor to our house — only it doesn’t usually come from a delivery person. Making homemade pizza from prepared dough is a quick and easy dinner any night of the week. Even making your own dough only really adds a few minutes to the prep time! Pile on your favorite toppings and get ready to chow down.",
     creator: "60c5fbdc8c3b2720a2e13644",
   },
   {
     _id: "60c5fbdc8c3b2720a2e13641",
-    name: "rissoto",
+    name: "Rissoto",
     country: "Italy",
-    ingredients: ["rice", "butter", "cheese"],
+    ingredients: ["Rice", "Butter", "Cheese"],
     preparation:
       "Pizza is a regular visitor to our house — only it doesn’t usually come from a delivery person. Making homemade pizza from prepared dough is a quick and easy dinner any night of the week. Even making your own dough only really adds a few minutes to the prep time! Pile on your favorite toppings and get ready to chow down.",
     creator: "60c5fbdc8c3b2720a2e13644",
   },
   {
     _id: "60c5fbdc8c3b2720a2e13642",
-    name: "cuban rice",
+    name: "Cuban Rice",
     country: "Cuba",
-    ingredients: ["rice", "tomato", "egg"],
+    ingredients: ["Rice", "Tomato", "Egg"],
     preparation:
       "Pizza is a regular visitor to our house — only it doesn’t usually come from a delivery person. Making homemade pizza from prepared dough is a quick and easy dinner any night of the week. Even making your own dough only really adds a few minutes to the prep time! Pile on your favorite toppings and get ready to chow down.",
     creator: "60c5fbdc8c3b2720a2e13645",
   },
   {
     _id: "60c5fbdc8c3b2720a2e13643",
-    name: "french fries",
+    name: "French Fries",
     country: "France",
-    ingredients: ["potato", "oil", "salt"],
+    ingredients: ["Potato", "Oil", "Salt"],
     preparation:
       "Pizza is a regular visitor to our house — only it doesn’t usually come from a delivery person. Making homemade pizza from prepared dough is a quick and easy dinner any night of the week. Even making your own dough only really adds a few minutes to the prep time! Pile on your favorite toppings and get ready to chow down.",
     creator: "60c5fbdc8c3b2720a2e13646",

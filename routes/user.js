@@ -22,7 +22,7 @@ router.get("/user", async (req, res) => {
     return;
   }
 
-  res.send({ user });
+  res.send({ user: user, auth: true, message: "You are permitted." });
 });
 
 router.get("/searchUser/:username", async (req, res) => {
@@ -160,8 +160,11 @@ router.get("/recipe/:recipeId", async (req, res) => {
     .catch((error) => {
       res.send(error);
     });
-
-  res.send({ recipe: recipe, favourite: isFavourite });
+  if (recipe) {
+    res.send({ recipe: recipe, favourite: isFavourite, auth: true });
+  } else{
+    res.send({ recipe: null, favourite: isFavourite, auth: true });
+  }
 });
 
 router.post("/newRecipe", async (req, res) => {

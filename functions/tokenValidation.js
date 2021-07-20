@@ -8,8 +8,8 @@ let tokenValidation = async (response, token) => {
   if (!token) {
     response.send({
       auth: false,
-      token: null,
       message: `Not valid token.`,
+      user: null,
     });
     return;
   }
@@ -19,8 +19,8 @@ let tokenValidation = async (response, token) => {
   } catch (error) {
     response.send({
       auth: false,
-      token: null,
       message: `Not valid token.`,
+      user: null,
     });
     return;
   }
@@ -34,13 +34,12 @@ let tokenValidation = async (response, token) => {
     response.send({
       auth: false,
       message: "User does not exist.",
+      user: null,
     });
     return;
   }
 
   return user;
 };
-
-
 
 module.exports = tokenValidation;
