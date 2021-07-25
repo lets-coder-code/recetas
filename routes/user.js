@@ -25,6 +25,34 @@ router.get("/user", async (req, res) => {
   res.send({ user: user, auth: true, message: "You are permitted." });
 });
 
+router.get("/user/:userId", async (req, res) => {
+  let myToken = req.headers.token;
+
+  let user = await tokenValidation(res, myToken).then((userFound) => {
+    return userFound;
+  });
+
+  if (!user) {
+    return;
+  }
+
+  let id = req.params.userId;
+
+  let foundUser = await User.findById(id).populate("recipes");
+
+  let isFollowed = false;
+
+  if (user.following.length != 0) {
+    user.following.forEach((element) => {
+      if (element._id.toString() == foundUser._id.toString()) {
+        isFollowed = true;
+      }
+    });
+  }
+
+  res.send({ user: foundUser, auth: true, followed: isFollowed });
+});
+
 router.get("/searchUser/:username", async (req, res) => {
   let myToken = req.headers.token;
 
@@ -35,18 +63,28 @@ router.get("/searchUser/:username", async (req, res) => {
   }
 
   let name = req.params.username;
+
   let foundUser = await User.findOne({ username: name }, { password: 0 })
     .populate("recipes")
     .populate("favourites");
 
-  let isFollowed = false;
-  user.following.forEach((element) => {
-    if (element._id.toString() == foundUser._id.toString()) {
-      isFollowed = true;
+  if (foundUser) {
+    if (user._id.toString() == foundUser._id.toString()) {
+      res.send({
+        user: null,
+        auth: true,
+        message: "Do not search you profile.",
+      });
+    } else {
+      res.send({ user: foundUser, auth: true });
     }
-  });
-
-  res.send({ user: foundUser, following: isFollowed });
+  } else {
+    res.send({
+      user: null,
+      auth: true,
+      message: "This user does not exist.",
+    });
+  }
 });
 
 router.get("/searchRecipe/:recipeName", async (req, res) => {
@@ -59,14 +97,23 @@ router.get("/searchRecipe/:recipeName", async (req, res) => {
   }
 
   let name = req.params.recipeName;
+
   let recipe = await Recipe.findOne({ name: name }).then((foundRecipe) => {
     return foundRecipe;
   });
 
-  res.redirect(`/recipe/${recipe._id}`);
+  if (recipe) {
+    res.redirect(`/recipe/${recipe._id}`);
+  } else if (!recipe) {
+    res.send({
+      auth: true,
+      recipe: null,
+      message: "Recipe does not exist here.",
+    });
+  }
 });
 
-router.put("/followUser/:userId", async (req, res) => {
+router.post("/followUser/:userId", async (req, res) => {
   let myToken = req.headers.token;
 
   let user = await tokenValidation(res, myToken);
@@ -99,10 +146,10 @@ router.put("/followUser/:userId", async (req, res) => {
     return followed;
   });
 
-  res.redirect(`/searchUser/${followedUser.username}`);
+  res.send({ user: followedUser, auth: true });
 });
 
-router.put("/favouriteRecipe/:recipeId", async (req, res) => {
+router.post("/favouriteRecipe/:recipeId", async (req, res) => {
   let myToken = req.headers.token;
 
   let user = await tokenValidation(res, myToken);
@@ -162,7 +209,7 @@ router.get("/recipe/:recipeId", async (req, res) => {
     });
   if (recipe) {
     res.send({ recipe: recipe, favourite: isFavourite, auth: true });
-  } else{
+  } else {
     res.send({ recipe: null, favourite: isFavourite, auth: true });
   }
 });
@@ -202,7 +249,7 @@ router.post("/newRecipe", async (req, res) => {
   res.redirect(`/recipe/${recipe._id}`);
 });
 
-router.put("/updateRecipe/:recipeId", async (req, res) => {
+router.post("/updateRecipe/:recipeId", async (req, res) => {
   let myToken = req.headers.token;
 
   let user = await tokenValidation(res, myToken);
