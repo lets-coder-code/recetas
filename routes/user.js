@@ -102,6 +102,17 @@ router.get("/searchRecipe/:recipeName", async (req, res) => {
     return foundRecipe;
   });
 
+  user.recipes.forEach((userRecipe) => {
+    if (userRecipe._id.toString() === recipe._id.toString()) {
+      res.send({
+        auth: true,
+        recipe: null,
+        message: "Do not search your recipes.",
+      });
+      return;
+    }
+  });
+
   if (recipe) {
     res.redirect(`/recipe/${recipe._id}`);
   } else if (!recipe) {
@@ -200,13 +211,8 @@ router.get("/recipe/:recipeId", async (req, res) => {
     }
   });
 
-  let recipe = await Recipe.findById(id)
-    .then((foundRecipe) => {
-      return foundRecipe;
-    })
-    .catch((error) => {
-      res.send(error);
-    });
+  let recipe = await Recipe.findById(id).populate("creator");
+
   if (recipe) {
     res.send({ recipe: recipe, favourite: isFavourite, auth: true });
   } else {
